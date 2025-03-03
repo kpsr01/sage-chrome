@@ -1,3 +1,5 @@
+import llmService from './api/llmService.js';
+
 const site = window.location.hostname
 
 
@@ -76,9 +78,24 @@ class YouTubeChatAssistant {
         this.isDarkMode = document.documentElement.hasAttribute('dark') || 
                          document.querySelector('ytd-app[dark]') !== null || 
                          document.querySelector('html[dark]') !== null;
+        this.transcript = null;
+        this.metadata = null;
+        this.lastUpdate = Date.now();
+        this.throttleDelay = 500;
         this.init();
         this.setupUrlChangeListener();
         this.setupThemeObserver();
+    }
+
+    init() {
+        if (this.site.includes('youtube.com')) {
+            this.setupObserver();
+            const sidebar = document.querySelector('#secondary.style-scope.ytd-watch-flexy');
+            if (sidebar) {
+                this.insertInSidebar();
+                this.updateTranscript();
+            }
+        }
     }
 
     setupUrlChangeListener() {
@@ -105,31 +122,22 @@ class YouTubeChatAssistant {
             this.getVideoMetadata()
         ]);
 
+        if (transcriptResult && !transcriptResult.error) {
+            this.transcript = transcriptResult.data;
+        }
+        
+        if (metadata) {
+            this.metadata = metadata;
+        }
+
         const messagesDiv = document.querySelector('#chatMessages');
         if (messagesDiv) {
             messagesDiv.innerHTML = '';
-            
-            const metadataDiv = document.createElement('div');
-            metadataDiv.className = 'video-metadata';
-metadataDiv.innerHTML = `
-<div class="metadata-title">${metadata.title}</div>
-<div class="metadata-channel">${metadata.channel}</div>
-<div class="metadata-date">Uploaded on ${metadata.uploadDate}</div>
-<div class="metadata-tags">${metadata.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}</div>
-<div class="metadata-description">${metadata.description}</div>
-`;
-            messagesDiv.appendChild(metadataDiv);
-            
             const welcomeMsg = document.createElement('p');
             welcomeMsg.style.color = '#666';
-            welcomeMsg.style.fontSize = '14px';
+            welcomeMsg.style.fontSize = '16px';
             welcomeMsg.textContent = 'Welcome! Ask me anything about this video...';
             messagesDiv.appendChild(welcomeMsg);
-            
-            if (transcriptResult) {
-                this.transcript = transcriptResult.data;
-                this.displayTranscript(transcriptResult);
-            }
         }
     }
 
@@ -186,61 +194,6 @@ metadataDiv.innerHTML = `
         }
     }
 
-    displayTranscript(transcriptResult) {
-        const messagesDiv = document.querySelector('#chatMessages');
-        if (!messagesDiv) return;
-
-        if (transcriptResult.error) {
-            const errorElement = document.createElement('div');
-            errorElement.style.marginBottom = '16px';
-            errorElement.style.padding = '12px';
-            errorElement.style.backgroundColor = '#fde8e8';
-            errorElement.style.borderRadius = '8px';
-            errorElement.style.color = '#e53e3e';
-            errorElement.innerHTML = `
-                <strong style="display: block; margin-bottom: 8px;">⚠️ Notice:</strong>
-                <div style="font-size: 14px; line-height: 1.4;">${transcriptResult.error}</div>
-            `;
-            messagesDiv.appendChild(errorElement);
-        } else if (transcriptResult.data) {
-            const transcriptElement = document.createElement('div');
-            transcriptElement.style.marginBottom = '16px';
-            transcriptElement.style.padding = '8px';
-            transcriptElement.style.backgroundColor = '#f0f0f0';
-            transcriptElement.style.borderRadius = '8px';
-            transcriptElement.innerHTML = `
-                <strong style="display: block; margin-bottom: 8px;">Video Transcript ${
-                    transcriptResult.language !== 'en' ? 
-                    `(${transcriptResult.language.toUpperCase()})` : 
-                    ''}:</strong>
-                <div style="font-size: 14px; line-height: 1.4;">${transcriptResult.data}</div>
-            `;
-            messagesDiv.appendChild(transcriptElement);
-        }
-
-        messagesDiv.scrollTop = messagesDiv.scrollHeight;
-    }
-
-    async init() {
-        if (this.site.includes("youtube.com")) {
-            this.setupObserver();
-            const transcriptResult = await this.fetchTranscript();
-            if (transcriptResult) {
-               // console.log('Transcript loaded:', transcriptResult);
-                this.transcript = transcriptResult;
-                
-                const checkInterval = setInterval(() => {
-                    if (document.querySelector('#chatMessages')) {
-                        this.displayTranscript(transcriptResult);
-                        clearInterval(checkInterval);
-                    }
-                }, 1000);
-
-                setTimeout(() => clearInterval(checkInterval), 10000);
-            }
-        }
-    }
-
     createChatInterface() {
         const template = `
             <div class="extension-header">
@@ -252,14 +205,13 @@ metadataDiv.innerHTML = `
                 </button>
             </div>
             <div class="chat-messages" id="chatMessages">
-                <p style="color: #666; font-size: 14px;">Welcome! Ask me anything about this video...</p>
+                <p style="color: #666; font-size: 16px;">Welcome! Ask me anything about this video...</p>
             </div>
             <div class="chat-input-container">
                 <input type="text" class="chat-input" placeholder="Type your message..." id="chatInput">
                 <button class="send-button">Send</button>
             </div>
         `;
-
         const extensionDiv = document.createElement('div');
         extensionDiv.className = 'yt-extension-sidebar';
         if (this.isDarkMode) {
@@ -274,14 +226,40 @@ metadataDiv.innerHTML = `
         const sendButton = container.querySelector('.send-button');
         const messagesDiv = container.querySelector('#chatMessages');
 
-        const sendMessage = () => {
+        const sendMessage = async () => {
             const message = input.value.trim();
             if (message) {
-                const messageElement = document.createElement('div');
-                messageElement.style.marginBottom = '8px';
-                messageElement.innerHTML = `<strong>You:</strong> ${message}`;
-                messagesDiv.appendChild(messageElement);
+                // Display user message
+                const userMessageElement = document.createElement('div');
+                userMessageElement.style.marginBottom = '12px';
+                userMessageElement.style.fontSize = '16px';
+                userMessageElement.innerHTML = `<strong>You:</strong> ${message}`;
+                messagesDiv.appendChild(userMessageElement);
                 input.value = '';
+
+                // Show loading indicator
+                const loadingElement = document.createElement('div');
+                loadingElement.innerHTML = '<strong>AI:</strong> Thinking...';
+                messagesDiv.appendChild(loadingElement);
+
+                try {
+                    // Get current video context
+                    const videoData = {
+                        transcript: this.transcript?.data || '',
+                        metadata: await this.getVideoMetadata()
+                    };
+
+                    // Get AI response
+                    const response = await llmService.answerQuery(message, JSON.stringify(videoData));
+
+                    // Replace loading message with actual response
+                    loadingElement.innerHTML = `<strong>AI:</strong> ${response}`;
+                } catch (error) {
+                    loadingElement.innerHTML = '<strong>AI:</strong> Sorry, I encountered an error processing your request.';
+                    console.error('Error processing query:', error);
+                }
+
+                // Scroll to bottom
                 messagesDiv.scrollTop = messagesDiv.scrollHeight;
             }
         };
@@ -419,6 +397,17 @@ metadataDiv.innerHTML = `
             };
         }
     }
+}
+
+// Example usage
+async function handleVideoLoad(videoData) {
+    const summary = await llmService.processVideoContent(videoData);
+    // Store or display the summary
+}
+
+async function handleUserQuery(query, videoContext) {
+    const answer = await llmService.answerQuery(query, videoContext);
+    // Display the answer
 }
 
 new YouTubeChatAssistant();

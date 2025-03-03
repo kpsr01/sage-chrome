@@ -23,7 +23,13 @@
     padding: 8px;
     background: #f8f8f8;
     border-radius: 8px;
-    border: 1px solid rgba(0, 0, 0, 0.1);
+    font-size: 16px;
+}
+
+.chat-messages > div {
+    margin-bottom: 12px;
+    font-size: 16px;
+    line-height: 1.4;
 }
 
 .chat-input-container {
@@ -36,7 +42,7 @@
     padding: 8px 12px;
     border: 1px solid #e0e0e0;
     border-radius: 20px;
-    font-size: 14px;
+    font-size: 16px;
     outline: none;
 }
 
@@ -222,11 +228,6 @@
     border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.chat-messages > div {
-    border: 1px solid rgba(0, 0, 0, 0.05);
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-}
-
 .yt-extension-sidebar.dark-mode.collapsed {
     box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 2px, 
                 rgba(0, 0, 0, 0.3) 0px 1px 4px !important;
@@ -238,108 +239,4 @@
 
 .yt-extension-sidebar.dark-mode .chat-messages > div > strong:first-child {
     color: #ffffff !important; 
-}
-
-.video-metadata {
-    background-color: #f8f8f8;
-    padding: 12px;
-    border-radius: 8px;
-    margin-bottom: 16px;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-.metadata-title {
-    font-size: 16px;
-    font-weight: 500;
-    margin-bottom: 8px;
-    color: #030303;
-}
-
-.metadata-channel {
-    font-size: 14px;
-    color: #065fd4;
-    margin-bottom: 4px;
-}
-
-.metadata-date {
-    font-size: 12px;
-    color: #606060;
-}
-
-.yt-extension-sidebar.dark-mode .video-metadata {
-    background-color: #272727;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.yt-extension-sidebar.dark-mode .metadata-title {
-    color: #ffffff;
-}
-
-.yt-extension-sidebar.dark-mode .metadata-channel {
-    color: #3ea6ff;
-}
-
-.yt-extension-sidebar.dark-mode .metadata-date {
-    color: #aaaaaa;
-}
-
-.metadata-description {
-    font-size: 14px;
-    color: #606060;
-    margin-top: 8px;
-    white-space: pre-wrap;
-    max-height: 100px;
-    overflow-y: auto;
-    line-height: 1.4;
-    padding-right: 8px;
-}
-
-.yt-extension-sidebar.dark-mode .metadata-description {
-    color: #aaaaaa;
-}
-
-.metadata-description::-webkit-scrollbar {
-    width: 8px;
-}
-
-.metadata-description::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-.metadata-description::-webkit-scrollbar-thumb {
-    background: #888;
-    border-radius: 4px;
-}
-
-.metadata-description::-webkit-scrollbar-thumb:hover {
-    background: #555;
-}
-
-.yt-extension-sidebar.dark-mode .metadata-description::-webkit-scrollbar-thumb {
-    background: #555;
-}
-
-.yt-extension-sidebar.dark-mode .metadata-description::-webkit-scrollbar-thumb:hover {
-    background: #666;
-}
-
-.metadata-tags {
-    margin: 8px 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 4px;
-}
-
-.tag {
-    background-color: #f0f0f0;
-    color: #065fd4;
-    padding: 2px 8px;
-    border-radius: 12px;
-    font-size: 12px;
-    font-weight: 500;
-}
-
-.yt-extension-sidebar.dark-mode .tag {
-    background-color: #272727;
-    color: #3ea6ff;
 }
