@@ -1,0 +1,19 @@
+{
+    "name": "YT-Chat Helper",
+    "description": "A simple extension to help you with your YT videos",
+    "version": "0.0.0.1",
+    "manifest_version": 3,
+    "content_scripts": [
+        {
+            "matches": [
+                "https://*.youtube.com/*"
+            ],
+            "css": [
+                "styles.css"
+            ],
+            "js": [
+                "app.jsx"
+            ]
+        }
+    ]
+}
