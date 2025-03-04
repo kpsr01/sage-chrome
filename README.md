@@ -19,7 +19,7 @@ Sage is a powerful Firefox extension that enhances your YouTube experience by pr
 ### Option 1: Firefox Add-ons Store (Recommended)
 
 The easiest way to install Sage is through the Firefox Add-ons store:
-[Install Sage](https://addons.mozilla.org/en-US/firefox/addon/sageyt/?utm_source=addons.mozilla.org&utm_medium=referral&utm_content=search)
+[Install Sage](https://addons.mozilla.org/en-US/firefox/addon/sageyt)
 
 ### Option 2: Manual Installation (Development)
 
