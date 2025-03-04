@@ -1,6 +1,6 @@
 {
-    "name": "YT-Chat Helper",
-    "description": "A simple extension to help you with your YT videos",
+    "name": "Sage",
+    "description": "A free AI extension which watches YouTube and answers your questions.",
     "version": "0.0.0.1",
     "manifest_version": 3,
     "content_security_policy": {
