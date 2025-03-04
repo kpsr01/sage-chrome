@@ -22,5 +22,11 @@
                 "dist/bundle.js"
             ]
         }
-    ]
+    ],
+    "browser_specific_settings": {
+        "gecko": {
+            "id": "{c3447c8e-42a1-4dc7-9639-43f528ea79d9}",
+            "strict_min_version": "109.0"
+        }
+    }
 }
