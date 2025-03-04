@@ -197,7 +197,7 @@ class YouTubeChatAssistant {
     createChatInterface() {
         const template = `
             <div class="extension-header">
-                <h2 class="extension-title">YT AI Assistant</h2>
+                <h2 class="extension-title">Sage</h2>
                 <button class="collapse-button" title="Collapse/Expand">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/>
@@ -239,7 +239,7 @@ class YouTubeChatAssistant {
 
                 // Show loading indicator
                 const loadingElement = document.createElement('div');
-                loadingElement.innerHTML = '<strong>AI:</strong> Thinking...';
+                loadingElement.innerHTML = '<strong>Sage:</strong> Thinking...';
                 messagesDiv.appendChild(loadingElement);
 
                 try {
@@ -253,9 +253,9 @@ class YouTubeChatAssistant {
                     const response = await llmService.answerQuery(message, JSON.stringify(videoData));
 
                     // Replace loading message with actual response
-                    loadingElement.innerHTML = `<strong>AI:</strong> ${response}`;
+                    loadingElement.innerHTML = `<strong>Sage:</strong> ${response}`;
                 } catch (error) {
-                    loadingElement.innerHTML = '<strong>AI:</strong> Sorry, I encountered an error processing your request.';
+                    loadingElement.innerHTML = '<strong>Sage:</strong> Sorry, I encountered an error processing your request.';
                     console.error('Error processing query:', error);
                 }
 
