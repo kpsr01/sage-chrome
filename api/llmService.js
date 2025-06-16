@@ -92,9 +92,8 @@ class LLMService {
       }
   }
 
-  async answerQuery(query) {
+  async answerQuery(query, videoData) {
       try {
-          const videoData = await this.processVideoData();
           const formattedContext = `
               Video Title: ${videoData.metadata.title}
               Channel Name: ${videoData.metadata.channel}
@@ -145,4 +144,4 @@ class LLMService {
   }
 }
 
-export default new LLMService();
+module.exports = { LLMService };

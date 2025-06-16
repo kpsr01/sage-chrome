@@ -249,18 +249,49 @@ class YouTubeChatAssistant {
                         metadata: await this.getVideoMetadata()
                     };
 
-                    // Get AI response
-                    const response = await llmService.answerQuery(message, JSON.stringify(videoData));
+                    // Call the deployed API endpoint
+                    const response = await fetch('YOUR_VERCEL_DEPLOYMENT_URL/api', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            query: message,
+                            videoData: videoData
+                        })
+                    });
 
-                    // Replace loading message with actual response
-                    loadingElement.innerHTML = `<strong>Sage:</strong> ${response}`;
+                    if (!response.ok) {
+                        throw new Error('API request failed');
+                    }
+
+                    const data = await response.json();
+                    
+                    // Remove loading indicator
+                    messagesDiv.removeChild(loadingElement);
+                    
+                    // Display AI response
+                    const aiMessageElement = document.createElement('div');
+                    aiMessageElement.style.marginBottom = '12px';
+                    aiMessageElement.style.fontSize = '16px';
+                    aiMessageElement.innerHTML = `<strong>Sage:</strong> ${data.answer}`;
+                    messagesDiv.appendChild(aiMessageElement);
+                    
+                    // Scroll to bottom
+                    messagesDiv.scrollTop = messagesDiv.scrollHeight;
                 } catch (error) {
-                    loadingElement.innerHTML = '<strong>Sage:</strong> Sorry, I encountered an error processing your request.';
-                    console.error('Error processing query:', error);
+                    console.error('Error:', error);
+                    // Remove loading indicator
+                    messagesDiv.removeChild(loadingElement);
+                    
+                    // Display error message
+                    const errorElement = document.createElement('div');
+                    errorElement.style.marginBottom = '12px';
+                    errorElement.style.fontSize = '16px';
+                    errorElement.style.color = '#ff0000';
+                    errorElement.innerHTML = `<strong>Sage:</strong> Sorry, I encountered an error. Please try again.`;
+                    messagesDiv.appendChild(errorElement);
                 }
-
-                // Scroll to bottom
-                messagesDiv.scrollTop = messagesDiv.scrollHeight;
             }
         };
 
