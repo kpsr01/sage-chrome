@@ -250,7 +250,7 @@ class YouTubeChatAssistant {
                     };
 
                     // Call the deployed API endpoint
-                    const response = await fetch('YOUR_VERCEL_DEPLOYMENT_URL/api', {
+                    const response = await fetch('https://sage-ext.vercel.app/api', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
