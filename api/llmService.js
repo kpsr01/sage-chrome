@@ -5,6 +5,11 @@ class LLMService {
       this.siteName = process.env.SITE_NAME;
       
       if (!this.apiKey) {
+          console.error('Environment variables check:', {
+              hasApiKey: !!this.apiKey,
+              hasSiteUrl: !!this.siteUrl,
+              hasSiteName: !!this.siteName
+          });
           throw new Error('OpenRouter API key not found in environment variables');
       }
   }
@@ -94,6 +99,12 @@ class LLMService {
 
   async answerQuery(query, videoData) {
       try {
+          console.log('Processing query with video data:', {
+              queryLength: query.length,
+              hasTranscript: !!videoData.transcript,
+              hasMetadata: !!videoData.metadata
+          });
+
           const formattedContext = `
               Video Title: ${videoData.metadata.title}
               Channel Name: ${videoData.metadata.channel}
@@ -105,6 +116,7 @@ class LLMService {
               ${videoData.transcript}
           `;
 
+          console.log('Making request to OpenRouter API...');
           const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
               method: "POST",
               headers: {
@@ -131,15 +143,26 @@ class LLMService {
           });
 
           if (!response.ok) {
-              throw new Error(`API request failed: ${response.statusText}`);
+              const errorText = await response.text();
+              console.error('OpenRouter API error:', {
+                  status: response.status,
+                  statusText: response.statusText,
+                  errorText
+              });
+              throw new Error(`API request failed: ${response.statusText} - ${errorText}`);
           }
 
           const data = await response.json();
+          console.log('Successfully received response from OpenRouter API');
           return data.choices[0].message.content;
           
       } catch (error) {
-          console.error('Error in answerQuery:', error);
-          return `Sorry, I encountered an error: ${error.message}. Please try again.`;
+          console.error('Error in answerQuery:', {
+              message: error.message,
+              stack: error.stack,
+              name: error.name
+          });
+          throw error;
       }
   }
 }

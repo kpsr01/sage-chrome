@@ -262,7 +262,8 @@ class YouTubeChatAssistant {
                     });
 
                     if (!response.ok) {
-                        throw new Error('API request failed');
+                        const errorData = await response.json();
+                        throw new Error(errorData.details || response.statusText);
                     }
 
                     const data = await response.json();
@@ -289,7 +290,7 @@ class YouTubeChatAssistant {
                     errorElement.style.marginBottom = '12px';
                     errorElement.style.fontSize = '16px';
                     errorElement.style.color = '#ff0000';
-                    errorElement.innerHTML = `<strong>Sage:</strong> Sorry, I encountered an error. Please try again.`;
+                    errorElement.innerHTML = `<strong>Sage:</strong> Error: ${error.message || 'Unknown error occurred'}`;
                     messagesDiv.appendChild(errorElement);
                 }
             }
