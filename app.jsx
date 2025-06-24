@@ -290,7 +290,7 @@ class YouTubeChatAssistant {
                     errorElement.style.marginBottom = '12px';
                     errorElement.style.fontSize = '16px';
                     errorElement.style.color = '#ff0000';
-                    errorElement.innerHTML = `<strong>Sage:</strong> Error: ${error.message || 'Unknown error occurred'}`;
+                    errorElement.innerHTML = `<strong>Sage:</strong> Server error, please try again later`;
                     messagesDiv.appendChild(errorElement);
                 }
             }

@@ -116,7 +116,8 @@ class LLMService {
               ${videoData.transcript}
           `;
 
-          console.log('Making request to OpenRouter API...');
+          const systemPrompt = `You are a helpful AI assistant that answers questions about YouTube videos based on their transcripts and metadata. Analyze the provided transcript and metadata to give concise, accurate answers that are directly related to the video content. If the information isn't in the video content, acknowledge that. The date is in DD/MM/YYYY format. Don't mention about the metadata or transcript to the user. The user should think you can see the video, so communicate just about the video. Your response must be clear, safe, and user-appropriate. If the answer contains errors, technical jargon, or is not appropriate for users, respond with a friendly message like 'Server error, please try again later.'`;
+
           const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
               method: "POST",
               headers: {
@@ -130,7 +131,7 @@ class LLMService {
                   "messages": [
                       {
                           "role": "system",
-                          "content": "You are a helpful AI assistant that answers questions about YouTube videos based on their transcripts and metadata. Analyze the provided transcript and metadata to give concise, accurate answers that are directly related to the video content. If the information isn't in the video content, acknowledge that. The date is in DD/MM/YYYY format. Dont mention about the metadata or transcript to the user. The user should think you can see the video, so communicate just about the video. Use the following context to answer the user's question:"
+                          "content": systemPrompt
                       },
                       {
                           "role": "user",
@@ -149,7 +150,7 @@ class LLMService {
                   statusText: response.statusText,
                   errorText
               });
-              throw new Error(`API request failed: ${response.statusText} - ${errorText}`);
+              return `Error: API request failed: ${response.statusText} - ${errorText}`;
           }
 
           const data = await response.json();
@@ -162,9 +163,9 @@ class LLMService {
               stack: error.stack,
               name: error.name
           });
-          throw error;
+          return `Error: ${error.message}`;
       }
   }
 }
 
-module.exports = { LLMService };
+export { LLMService };

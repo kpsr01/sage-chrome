@@ -1,6 +1,6 @@
-const { LLMService } = require('./llmService');
+import { LLMService } from './llmService.js';
 
-module.exports = async (req, res) => {
+export default async (req, res) => {
   // Add CORS headers
   res.setHeader('Access-Control-Allow-Credentials', true);
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -38,6 +38,10 @@ module.exports = async (req, res) => {
 
     const llmService = new LLMService();
     const answer = await llmService.answerQuery(query, videoData);
+
+    if (answer.startsWith('Error:')) {
+      return res.status(500).json({ error: 'Internal server error', details: answer });
+    }
     
     return res.status(200).json({ answer });
   } catch (error) {
