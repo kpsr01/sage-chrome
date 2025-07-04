@@ -257,7 +257,7 @@ class YouTubeChatAssistant {
                         transcript: this.transcript?.data || '',
                         metadata: await this.getVideoMetadata()
                     };
-                    const response = await fetch('https://sage-of93.vercel.app/api', {
+                    const response = await fetch('https://sage-chrome.vercel.app/api', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -441,7 +441,7 @@ class YouTubeChatAssistant {
                     transcript: this.transcript?.data || '',
                     metadata: await this.getVideoMetadata()
                 };
-                const response = await fetch('https://sage-of93.vercel.app/api', {
+                const response = await fetch('https://sage-chrome.vercel.app/api', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
